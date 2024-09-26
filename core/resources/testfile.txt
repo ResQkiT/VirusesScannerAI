@@ -1,0 +1,4 @@
+O=C(/C=C/c1cccc(S(=O)(=O)Nc2ccccc2)c1)NO
+Cc1cccc(-c2[nH]c(C(C)(C)C)nc2-c2ccc3nccnc3c2)n1
+COc1ccc(CCN2CCN(CCCc3ccccc3)CC2)cc1OC.Cl.Cl 	
+CN(C)C(=O)n1nnnc1Cc1ccc(-c2ccccc2)cc1 	
