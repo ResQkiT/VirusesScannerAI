@@ -1,0 +1,2 @@
+formation-studio==0.7.0
+Pillow==9.5.0

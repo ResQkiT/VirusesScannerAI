@@ -1,6 +1,7 @@
 from formation import AppBuilder
 import tkinter as tk
 from Converter import Converter
+from Predictor import Predictor
 from tkinter import filedialog
 from PIL import Image, ImageTk
 from tkinter.messagebox import showerror, showwarning, showinfo
@@ -14,6 +15,7 @@ entry = app.entry_label
 error_label = app.error_label
 photo_label = app.photo_label
 list_box = app.list_box
+output_box = app.output_box
 load_file_button = app.loadfilebutton
 picture_name_label = app.picture_name
 
@@ -59,6 +61,13 @@ def save_to_csv():
     pass
 
 def make_prediction():
+    selected_list = get_selected()
+    predictor = Predictor(lambda x: (1, 2)) 
+    answer = predictor.predict_for_each(selected_list)
+    print(answer)
+    for key_smile in answer.keys():
+        output_box.insert("end", key_smile)
+        output_box.insert("end", f"name1: {answer[key_smile][0]}, name2: {answer[key_smile][1]}")
     pass
 
 app.connect_callbacks(globals())
