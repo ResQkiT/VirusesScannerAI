@@ -19,6 +19,8 @@ output_box = app.output_box
 load_file_button = app.loadfilebutton
 picture_name_label = app.picture_name
 
+app.refresh.set('\U0001f5d8')
+
 def get_selected():
     return [list_box.get(idx) for idx in list_box.curselection()]
 
@@ -64,12 +66,14 @@ def make_prediction():
     selected_list = get_selected()
     predictor = Predictor(lambda x: (1, 2)) 
     answer = predictor.predict_for_each(selected_list)
-    print(answer)
+    #print(answer)
     for key_smile in answer.keys():
         output_box.insert("end", key_smile)
         output_box.insert("end", f"name1: {answer[key_smile][0]}, name2: {answer[key_smile][1]}")
     pass
 
+def refresh_list():
+    output_box.delete(0, output_box.size())
 app.connect_callbacks(globals())
 
 if __name__ == "__main__":
