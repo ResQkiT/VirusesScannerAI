@@ -29,7 +29,7 @@ def convert_image():
     if smiles_string.strip() == "":
         selected_values_list = get_selected()
         if(len(selected_values_list) != 1):
-            showinfo(message="Choose 1 formula")
+            showinfo("INFO", message="Choose 1 formula")
             return
         else:
             smiles_string = selected_values_list[0]
@@ -42,7 +42,7 @@ def convert_image():
         photo_label.image = photo 
         app.labeltext.set(smiles_string)
     except Exception:
-        showerror(message="Convert error")
+        showerror("ERROR", message="Convert error")
 
 def copy_to_entry():
     try:
@@ -51,29 +51,37 @@ def copy_to_entry():
         entry.insert(0, clipboard_text)
     except Exception as e:
         tk.show
-        showerror(message="Error with clipboard")
+        showerror("ERROR", message="Error with clipboard")
 
 def load_from_file():
     dir_name = filedialog.askopenfile()
     with open(dir_name.name, "r") as file:
         for line in file.readlines():
-            list_box.insert("end", line)
+            list_box.insert("end", line.strip())
 
 def save_to_csv():
     pass
 
 def make_prediction():
+    
     selected_list = get_selected()
-    predictor = Predictor(lambda x: (1, 2)) 
-    answer = predictor.predict_for_each(selected_list)
-    #print(answer)
+    if(len(selected_list) == 0):
+        showwarning("Choose at least 1 smiles formule")
+        return
+    
+    predictor = Predictor() 
+    predictor.proceed(selected_list)
+    
+    #showerror("ERROR", message="Something wrong with prediction model, please try again later or contact us")
+    """
     for key_smile in answer.keys():
         output_box.insert("end", key_smile)
         output_box.insert("end", f"name1: {answer[key_smile][0]}, name2: {answer[key_smile][1]}")
-    pass
+    """
 
 def refresh_list():
     output_box.delete(0, output_box.size())
+
 app.connect_callbacks(globals())
 
 if __name__ == "__main__":
