@@ -46,6 +46,13 @@ VirusesScannerAI - это проект, направленный на разра
 
 
 ![LOGO](https://github.com/ResQkiT/VirusesScannerAI/raw/main/core/resources/showcase.png)
+### Использование
+Для корректной работы требуется
+Python 3.10
+#### 1) Установка всех зависимостей
+` pip install -r requirements.txt `
+#### 2) Запуск из директории application
+` python3 main.py`
 
 ## VirusesScannerAI: Будущее разработки лекарств
 
