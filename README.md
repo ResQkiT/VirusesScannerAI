@@ -37,7 +37,9 @@ VirusesScannerAI - это проект, направленный на разра
     |\ application -  # Файлы исходного кода
     |\ models -       # Файлы модели
     |\ resourses -    # Используемые в проекте ресурсы
-    \  requirements.txt
+\  requirements.txt
+\  Hacaton_ProNike_learning_vero_final.ipynb
+\  Hacaton_ProNike_learning_virus_final.ipynb
 ```
 
 ### Состояние проекта
