@@ -12,7 +12,7 @@ from sklearn.decomposition import PCA
 
 class Predictor:
     def __init__(self):
-        self.model_v = joblib.load('..\\models\\monkey_cc50.joblib') #TODO: невалидный путь
+        self.model_v = joblib.load('..\\models\\virus2.joblib')
         self.model_vero = joblib.load('..\\models\\monkey_cc50.joblib')
         
     

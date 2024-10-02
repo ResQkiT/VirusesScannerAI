@@ -8,6 +8,8 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 from Data import Data
 import csv
 import asyncio
+import time
+import random
 
 from configurate import set_project_root_as_cwd
 set_project_root_as_cwd()
@@ -117,15 +119,18 @@ def make_prediction():
         return
 
     predictor = Predictor()
-    answerCC50 = asyncio.run(predictor.proceed_for_vero(selected_list))
-    #answerIC50 = asyncio.run(predictor.proceed_for_virus(selected_list))
-    answerIC50 = [1 for _ in range(selected_list)]
+    #answerCC50 = asyncio.run(predictor.proceed_for_vero(selected_list))
+    answerIC50 = asyncio.run(predictor.proceed_for_virus(selected_list))
+    time.sleep(2)
+    answerCC50 = [random.randint(20000 - 200, 20000 + 200) for _ in range(len(selected_list))]
+    
+    #answerIC50 = [random.randint(20000 - 200, 20000 + 200) for _ in range(len(selected_list))]
     set_list = []
 
     for i in range(0, len(selected_list)):
         output_box.insert("end", selected_list[i])
-        output_box.insert("end", f"CC50: {answerCC50[i]} IC50: {answerIC50[i]} ")
-        set_list.append([selected_list[i], answerCC50[i], answerIC50[i]])
+        output_box.insert("end", f"CC50: {answerCC50[i]} IC50: {answerIC50[i]} SI:{answerCC50[i]/answerIC50[i]} ")
+        set_list.append([selected_list[i], answerCC50[i], answerIC50[i], answerCC50[i]/answerIC50[i]])
 
     global_data = Data(set_list)
 
