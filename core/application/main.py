@@ -9,7 +9,10 @@ from Data import Data
 import csv
 import asyncio
 
-app = AppBuilder(path="core\\resources\\main.xml")
+from configurate import set_project_root_as_cwd
+set_project_root_as_cwd()
+
+app = AppBuilder(path="..\\resources\\main.xml")
 
 #entities
 window = app.tk_1
@@ -114,13 +117,15 @@ def make_prediction():
         return
 
     predictor = Predictor()
-    answer1Dlist = asyncio.run(predictor.proceed(selected_list))
+    answerCC50 = asyncio.run(predictor.proceed_for_vero(selected_list))
+    #answerIC50 = asyncio.run(predictor.proceed_for_virus(selected_list))
+    answerIC50 = [1 for _ in range(selected_list)]
     set_list = []
 
     for i in range(0, len(selected_list)):
         output_box.insert("end", selected_list[i])
-        output_box.insert("end", f"от модели: {answer1Dlist[i]}")
-        set_list.append([selected_list[i], answer1Dlist[i]])
+        output_box.insert("end", f"CC50: {answerCC50[i]} IC50: {answerIC50[i]} ")
+        set_list.append([selected_list[i], answerCC50[i], answerIC50[i]])
 
     global_data = Data(set_list)
 
