@@ -16,9 +16,7 @@ class Predictor:
         
     
     def smiles_to_dataframe(self, smiles_list):
-        print(smiles_list)
         df =  pd.DataFrame({'Smiles': smiles_list})
-        print(df)
         return df
     
     '''meta functions'''
@@ -41,50 +39,60 @@ class Predictor:
     ''''''
 
         
-    def proceed(self, input : list):
+    async def proceed(self, input : list):
         #Чтение даннных
+        removed_columns = [
+        'feature_2049', 'feature_2055', 'feature_2056', 'feature_2057',
+        'feature_2061', 'feature_2062', 'feature_2064', 'feature_2065',
+        'feature_2076', 'feature_2077', 'feature_2078', 'feature_2079',
+        'feature_2080', 'feature_2081', 'feature_2082', 'feature_2083',
+        'feature_2084', 'feature_2085', 'feature_2086', 'feature_2087',
+        'feature_2088', 'feature_2091', 'feature_2092', 'feature_2093',
+        'feature_2094', 'feature_2152', 'feature_2154', 'feature_2162',
+        'feature_2163', 'feature_2164', 'feature_2170', 'feature_2173',
+        'feature_2180', 'feature_2182', 'feature_2192', 'feature_2204',
+        'feature_2231', 'feature_2233'
+        ]
+
         data = self.smiles_to_dataframe(input)
 
         Y = self.rdkit_fp(data["Smiles"])
         Z = self.rdkit_2d(data["Smiles"])
-        
+
         data = data.join(Y)
         data = data.join(Z)
-        
+
         if data.isnull().sum().sum()!=0:
             data=data.dropna()
-        print(data)
         #Обработка
         data = shuffle(data)
         data.reset_index(inplace=True)
         X = data.drop(['Smiles',"index"], axis=1)# дроп токо смайлс
-
-
         scaler_loaded = joblib.load('core\models\scaler.pkl')
-        
+
         X_scaled = scaler_loaded.transform(X)  # X — это матрица признаков
+
 
         # Удаление признаков с низкой дисперсией
         selector_loaded = joblib.load('core\models\selector.pkl')
         X_var_thresh = selector_loaded.transform(X_scaled)
         # Вычислим корреляционную матрицу
-        corr_matrix = np.corrcoef(X_scaled, rowvar=False)
 
-        # Удалим признаки, коррелированные выше определенного порога
-        upper_triangle = np.triu(np.abs(corr_matrix), k=1)
-        to_drop = [i for i in range(upper_triangle.shape[1]) if any(upper_triangle[:, i] > 0.95)]
+        column_names = [f'feature_{i}' for i in range(X_var_thresh.shape[1])]
 
-        X_uncorr = np.delete(X_scaled, to_drop, axis=1)
-        print(X_uncorr.shape)
-        # Сохраним 95% дисперсии данных
+        to_drop = [column_names.index(col) for col in removed_columns if col in column_names]
 
+        X_uncorr = np.delete(X_var_thresh, to_drop, axis=1)
 
-        # weights_loaded = joblib.load('pca_weights.pkl')
-        pca_loaded = joblib.load('core\models\pca_weights.joblib')
+        # # Сохраним 95% дисперсии данных
+
+        pca_loaded = joblib.load('core\models\pca_model.pkl')
         X_pca = pca_loaded.transform(X_uncorr)
 
         #prediction_v = math.e ** self.model_v.predict(X_pca)
         #print(prediction_v)
-        prediction_h = math.e ** self.model_h.predict(X_pca)
-        print(prediction_h)
+        prediction_h =math.e ** self.model_h.predict(X_pca)
+        answer_h = [float(x) for x in prediction_h]
+        return answer_h
+
         

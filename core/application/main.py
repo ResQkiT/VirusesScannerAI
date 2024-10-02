@@ -3,9 +3,11 @@ import tkinter as tk
 from Converter import Converter
 from Predictor import Predictor
 from tkinter import filedialog
-from PIL import Image, ImageTk
+from PIL import ImageTk
 from tkinter.messagebox import showerror, showwarning, showinfo
- 
+from Data import Data
+import csv
+import asyncio
 
 app = AppBuilder(path="core\\resources\\main.xml")
 
@@ -19,67 +21,114 @@ output_box = app.output_box
 load_file_button = app.loadfilebutton
 picture_name_label = app.picture_name
 
+global_data = Data([], is_expired=True)
+
 app.refresh.set('\U0001f5d8')
 
+# --- Функции ---
 def get_selected():
+    """Возвращает список выбранных значений из list_box."""
     return [list_box.get(idx) for idx in list_box.curselection()]
 
 def convert_image():
-    smiles_string = app.entrytext.get() 
+    """Преобразует SMILES в изображение."""
+    smiles_string = app.entrytext.get()
+
     if smiles_string.strip() == "":
         selected_values_list = get_selected()
-        if(len(selected_values_list) != 1):
-            showinfo("INFO", message="Choose 1 formula")
+        if len(selected_values_list) != 1:
+            showinfo("INFO", message="Выберите 1 формулу")
             return
         else:
             smiles_string = selected_values_list[0]
-    
+
     try:
         converter = Converter()
         image = converter.convert(smiles_string, 600, 600)
         photo = ImageTk.PhotoImage(image)
         photo_label.config(image=photo)
-        photo_label.image = photo 
+        photo_label.image = photo
         app.labeltext.set(smiles_string)
     except Exception:
-        showerror("ERROR", message="Convert error")
+        showerror("Ошибка", message="Ошибка преобразования")
 
 def copy_to_entry():
+    """Копирует текст из буфера обмена в поле ввода."""
     try:
         clipboard_text = entry.clipboard_get()
         entry.delete(0, "end")
         entry.insert(0, clipboard_text)
     except Exception as e:
-        tk.show
-        showerror("ERROR", message="Error with clipboard")
+        showerror("Ошибка", message="Ошибка с буфером обмена")
 
 def load_from_file():
-    dir_name = filedialog.askopenfile()
-    with open(dir_name.name, "r") as file:
-        for line in file.readlines():
-            list_box.insert("end", line.strip())
+    """Загружает SMILES из CSV-файла в list_box."""
+    file_path = filedialog.askopenfilename(
+        defaultextension=".csv",
+        filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")]
+    )
+
+    if file_path:
+        try:
+            with open(file_path, 'r') as csvfile:
+                reader = csv.reader(csvfile)
+                next(reader, None)  # Пропускаем заголовок
+                for row in reader:
+                    list_box.insert("end", str(row[0]))
+        except Exception as e:
+            showerror("Ошибка", f"Ошибка при загрузке: {e}")
 
 def save_to_csv():
-    pass
+    """Сохраняет предсказания в CSV-файл."""
+    global global_data
+
+    if global_data.is_expired():
+        showwarning("Предупреждение", message="Нет данных для сохранения")
+        return
+
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".csv",
+        filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")]
+    )
+    if file_path:
+        try:
+            prediction_h_double = global_data.get_data()
+            with open(file_path, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                for value in prediction_h_double:
+                    writer.writerow(value)
+
+            showinfo("Успех", f"Данные успешно сохранены в {file_path}")
+
+        except Exception as e:
+            showerror("Ошибка", f"Ошибка при сохранении: {e}")
 
 def make_prediction():
-    
+    """Делает предсказания для выбранных SMILES."""
+    global global_data
+
     selected_list = get_selected()
-    if(len(selected_list) == 0):
-        showwarning("Choose at least 1 smiles formule")
+
+    if len(selected_list) == 0:
+        showwarning("Предупреждение", "Выберите хотя бы 1 формулу SMILES")
         return
-    
-    predictor = Predictor() 
-    predictor.proceed(selected_list)
-    
-    #showerror("ERROR", message="Something wrong with prediction model, please try again later or contact us")
-    """
-    for key_smile in answer.keys():
-        output_box.insert("end", key_smile)
-        output_box.insert("end", f"name1: {answer[key_smile][0]}, name2: {answer[key_smile][1]}")
-    """
+
+    predictor = Predictor()
+    answer1Dlist = asyncio.run(predictor.proceed(selected_list))
+    set_list = []
+
+    for i in range(0, len(selected_list)):
+        output_box.insert("end", selected_list[i])
+        output_box.insert("end", f"от модели: {answer1Dlist[i]}")
+        set_list.append([selected_list[i], answer1Dlist[i]])
+
+    global_data = Data(set_list)
+
+def choose_all():
+    list_box.selection_set(0, tk.END)
 
 def refresh_list():
+    """Очищает output_box."""
     output_box.delete(0, output_box.size())
 
 app.connect_callbacks(globals())
