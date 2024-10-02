@@ -1,6 +1,6 @@
 # VirusesScannerAI 
 
-![Текст с описанием картинки](core\resources\logo2.png)
+![LOGO](https://github.com/ResQkiT/VirusesScannerAI/raw/main/core/resources/logo2.png)
 
 ### *Предсказание противовирусной активности с помощью машинного обучения*
 
@@ -35,7 +35,8 @@ VirusesScannerAI - это проект, направленный на разра
 
 Проект находится на этапе прототипа, готова модель машинного обучения, а так же среда для взаимодействия с ней
 
-![Showcase](core\resources\showcase.png)
+
+![LOGO](https://github.com/ResQkiT/VirusesScannerAI/raw/main/core/resources/showcase.png)
 
 ## VirusesScannerAI: Будущее разработки лекарств
 
