@@ -12,8 +12,8 @@ from sklearn.decomposition import PCA
 
 class Predictor:
     def __init__(self):
-        self.model_v = joblib.load('..\\models\\virus2.joblib')
-        self.model_vero = joblib.load('..\\models\\monkey_cc50.joblib')
+        self.model_v = joblib.load('..\\models\\virus2.joblib') 
+        self.model_vero = joblib.load('..\\models\\vero.joblib')
         
     
     def smiles_to_dataframe(self, smiles_list):
@@ -40,13 +40,14 @@ class Predictor:
     
     async def proceed_for_vero(self, input : list):
   
-        removed_columns = ['feature_2050',
+        removed_columns = ['feature_2049',
+                            'feature_2055',
                             'feature_2056',
                             'feature_2057',
-                            'feature_2058',
+                            'feature_2060',
                             'feature_2061',
-                            'feature_2062',
-                            'feature_2065',
+                            'feature_2064',
+                            'feature_2076',
                             'feature_2077',
                             'feature_2078',
                             'feature_2079',
@@ -58,22 +59,21 @@ class Predictor:
                             'feature_2085',
                             'feature_2086',
                             'feature_2087',
-                            'feature_2088',
+                            'feature_2090',
                             'feature_2091',
                             'feature_2092',
                             'feature_2093',
-                            'feature_2094',
-                            'feature_2152',
-                            'feature_2154',
+                            'feature_2151',
+                            'feature_2153',
+                            'feature_2161',
                             'feature_2162',
-                            'feature_2163',
-                            'feature_2170',
-                            'feature_2173',
-                            'feature_2180',
-                            'feature_2182',
-                            'feature_2192',
-                            'feature_2205',
-                            'feature_2233']
+                            'feature_2169',
+                            'feature_2172',
+                            'feature_2179',
+                            'feature_2181',
+                            'feature_2191',
+                            'feature_2204',
+                            'feature_2232']
 
 
         data = self.smiles_to_dataframe(input)
@@ -120,7 +120,7 @@ class Predictor:
 
     async def proceed_for_virus(self, input : list):
         #Чтение даннных
-        removed_columns = [ 'feature_2049',
+        removed_columns = ['feature_2049',
                             'feature_2055',
                             'feature_2056',
                             'feature_2057',
@@ -195,7 +195,7 @@ class Predictor:
 
         #prediction_v = math.e ** self.model_v.predict(X_pca)
         #print(prediction_v)
-        prediction_h =math.e ** self.model_vero.predict(X_pca)
+        prediction_h =math.e ** self.model_v.predict(X_pca)
         answer_h = [float(x) for x in prediction_h]
         ## второе число IC50
         return answer_h
