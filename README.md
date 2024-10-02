@@ -83,6 +83,8 @@ https://www.sciencedirect.com/topics/medicine-and-dentistry/vero-cell
 
 https://pubmed.ncbi.nlm.nih.gov/27350309/
 
+### Showcase
+https://drive.google.com/drive/folders/1sDWp5pFHcGT0VgpDxB919_zbXvSvG_lp?usp=drive_link
 
 ### Команда
 - Блувштейн Елизавета: Специалист по машинному обучению
